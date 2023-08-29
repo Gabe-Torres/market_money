@@ -142,4 +142,64 @@ RSpec.describe 'Markets', type: :request do
       expect(response.body).to eq("Couldn't find Market with 'id'=123123123123")
     end
   end
+
+  context 'GET vendors' do
+    before :each do
+      @id = create(:market, id: 1).id
+      create(:vendor, id: 1, credit_accepted: true)
+      create(:vendor, id: 2, credit_accepted: true)
+      create(:vendor, id: 3, credit_accepted: true)
+      create(:market_vendor, market_id: 1, vendor_id: 1)
+      create(:market_vendor, market_id: 1, vendor_id: 2)
+      create(:market_vendor, market_id: 1, vendor_id: 3)
+
+      get "/api/v0/markets/#{@id}/vendors"
+    end
+    scenario 'searches for a market by id and displays vendors w/ attributes' do
+      market_vendors = JSON.parse(response.body, symbolize_names: true)
+      expect(response).to be_successful
+
+      market_vendors[:data].each do |mv|
+        expect(mv).to have_key(:id)
+        expect(mv[:id]).to be_an(String)
+
+        expect(mv[:attributes]).to have_key(:name)
+        expect(mv[:attributes][:name]).to be_a(String)
+
+        expect(mv[:attributes]).to have_key(:description)
+        expect(mv[:attributes][:description]).to be_a(String)
+
+        expect(mv[:attributes]).to have_key(:contact_name)
+        expect(mv[:attributes][:contact_name]).to be_a(String)
+
+        expect(mv[:attributes]).to have_key(:contact_phone)
+        expect(mv[:attributes][:contact_phone]).to be_a(String)
+      end
+    end
+  end
+
+  context 'happy path and sad path for GET vendors' do
+    scenario 'happy path, returns code 200' do
+      id = create(:market, id: 1).id
+      create(:vendor, id: 1, credit_accepted: true)
+      create(:market_vendor, market_id: 1, vendor_id: 1)
+
+      get "/api/v0/markets/#{id}/vendors"
+
+      expect(response).to have_http_status(:success)
+      expect(response.status).to eq(200)
+    end
+
+    scenario 'sad path, returns code 404' do
+      create(:market, id: 1)
+      create(:vendor, id: 1, credit_accepted: true)
+      create(:market_vendor, market_id: 1, vendor_id: 1)
+
+      get '/api/v0/markets/123123123123/vendors'
+
+      expect(response).to have_http_status(:not_found)
+      expect(response.status).to eq(404)
+      expect(response.body).to eq("Couldn't find Market with 'id'=123123123123")
+    end
+  end
 end
