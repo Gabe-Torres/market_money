@@ -8,6 +8,7 @@ class Market < ApplicationRecord
             :zip,
             :lat,
             :lon,
+            # :type,
             presence: true
 
   has_many :market_vendors
