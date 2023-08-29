@@ -19,6 +19,6 @@ class Api::V0::MarketsController < ApplicationController
   private
 
   def render_market_not_found
-    render json: ErrorMarket.new("Couldn't find Market with 'id'=#{params[:id]}").errors, status: :not_found
+    render json: ErrorMarket.new("Couldn't find Market with 'id'=#{params[:id]}"), status: :not_found
   end
 end

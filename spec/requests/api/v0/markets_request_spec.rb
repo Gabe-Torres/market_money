@@ -136,10 +136,11 @@ RSpec.describe 'Markets', type: :request do
       create(:market_vendor, market_id: 1, vendor_id: 1)
 
       get '/api/v0/markets/123123123123'
-
+      
+      error_response= JSON.parse(response.body)
       expect(response).to have_http_status(:not_found)
       expect(response.status).to eq(404)
-      expect(response.body).to eq("Couldn't find Market with 'id'=123123123123")
+      expect(error_response['errors']).to eq("Couldn't find Market with 'id'=123123123123")
     end
   end
 
@@ -197,9 +198,10 @@ RSpec.describe 'Markets', type: :request do
 
       get '/api/v0/markets/123123123123/vendors'
 
+      error_response = JSON.parse(response.body)
       expect(response).to have_http_status(:not_found)
       expect(response.status).to eq(404)
-      expect(response.body).to eq("Couldn't find Market with 'id'=123123123123")
+      expect(error_response['errors']).to eq("Couldn't find Market with 'id'=123123123123")
     end
   end
 end
