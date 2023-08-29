@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 FactoryBot.define do
   factory :market do
-    name { Faker::Company.name }
+    name { Faker::Games::ElderScrolls.name }
     street { Faker::Address.street_address }
     city { Faker::Address.city }
-    county { Faker::Address.county }
+    county { Faker::Games::ElderScrolls.city }
     state { Faker::Address.state }
     zip { Faker::Address.zip }
     lat { Faker::Address.latitude }
