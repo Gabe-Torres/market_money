@@ -5,6 +5,7 @@ require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+require 'factory_bot_rails'
 
 require 'simplecov'
 SimpleCov.start
@@ -47,8 +48,10 @@ RSpec.configure do |config|
 
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
-  # `post` in specs under `spec/controllers`.
-  #
+  # `post` in specs under `spec/controllers`
+
+  config.include FactoryBot::Syntax::Methods
+
   # You can disable this behaviour by removing the line below, and instead
   # explicitly tag your specs with their type, e.g.:
   #
