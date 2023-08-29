@@ -8,7 +8,9 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v0 do
-      resources :markets, only: [:index, :show]
+      resources :markets, only: [:index, :show] do
+        get 'vendors', on: :member
+      end
     end
   end
 end
