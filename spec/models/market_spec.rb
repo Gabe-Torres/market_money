@@ -10,6 +10,7 @@ RSpec.describe Market, type: :model do
     it { should validate_presence_of(:zip) }
     it { should validate_presence_of(:lat) }
     it { should validate_presence_of(:lon) }
+    # it { should_not validate_presence_of(:type) }
   end
 
   describe 'relationships' do
