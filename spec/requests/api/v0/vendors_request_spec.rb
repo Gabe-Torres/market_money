@@ -84,12 +84,12 @@ RSpec.describe 'Vendors', type: :request do
   context 'happy path and sad path for POST/create' do
     scenario 'happy path, returns code 201' do
       vendor_params = ({
-        name: 'Charizard Farms',
-        description: 'firey',
-        contact_name: 'Ash Ketchum',
-        contact_phone: '123-456-7890',
-        credit_accepted: true
-      })
+                        'name': 'Buzzy Bees',
+                        'description': 'local honey and wax products',
+                        'contact_name': 'Berly Couwer',
+                        'contact_phone': '8389928383',
+                        'credit_accepted': false
+                      })
 
       headers = { 'CONTENT_TYPE' => 'application/json' }
 
@@ -100,20 +100,19 @@ RSpec.describe 'Vendors', type: :request do
     end
 
     scenario 'sad path, returns code 400' do
-      vendor_params = {
-                        name: 'Charizard Farms',
-                        description: 'firey',
-                        contact_name: '',
-                        contact_phone: '',
-                        credit_accepted: true
-                      }
+      vendor_params = ({
+                        'name': "Buzzy Bees",
+                        'description': "local honey and wax products",
+                        'credit_accepted': false
+                      })
 
       headers = { 'CONTENT_TYPE' => 'application/json' }
 
       post '/api/v0/vendors', headers: headers, params: JSON.generate(vendor: vendor_params)
-
+      error_response = JSON.parse(response.body)
       expect(response).to have_http_status(:bad_request)
       expect(response.status).to eq(400)
+      expect(error_response['errors']).to eq("Validation failed: Contact name can't be blank, Contact phone can't be blank")
     end
   end
 end
