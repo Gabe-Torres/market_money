@@ -6,12 +6,9 @@ class Api::V0::VendorsController < ApplicationController
   end
 
   def create
-    vendor = Vendor.new(vendor_params)
-    if vendor.save
-      render json: VendorSerializer.new(Vendor.create!(vendor_params)), status: :created
-    else
-      render json: ErrorVendor.new(vendor.errors.full_messages.to_sentence), status: :bad_request
-    end
+    render json: VendorSerializer.new(Vendor.create!(vendor_params)), status: :created
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { errors: e.message }, status: :bad_request
   end
 
   private
