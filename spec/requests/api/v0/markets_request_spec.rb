@@ -144,7 +144,7 @@ RSpec.describe 'Markets', type: :request do
     end
   end
 
-  context 'GET vendors' do
+  context 'GET /vendors' do
     before :each do
       @id = create(:market, id: 1).id
       create(:vendor, id: 1, credit_accepted: true)
@@ -179,7 +179,7 @@ RSpec.describe 'Markets', type: :request do
     end
   end
 
-  context 'happy path and sad path for GET vendors' do
+  context 'happy path and sad path for GET /vendors' do
     scenario 'happy path, returns code 200' do
       id = create(:market, id: 1).id
       create(:vendor, id: 1, credit_accepted: true)

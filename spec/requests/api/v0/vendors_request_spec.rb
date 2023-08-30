@@ -55,4 +55,65 @@ RSpec.describe 'Vendors', type: :request do
       expect(error_response['errors']).to eq("Couldn't find Vendor with 'id'=123123123123")
     end
   end
+
+  context 'GET /create' do
+    scenario 'creates a new vendor and passes all attributes' do
+      vendor_params = ({
+                        name: 'Charizard Farms',
+                        description: 'firey',
+                        contact_name: 'Ash Ketchum',
+                        contact_phone: '123-456-7890',
+                        credit_accepted: true
+                      })
+
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      post '/api/v0/vendors', headers: headers, params: JSON.generate(vendor: vendor_params)
+
+      created_vendor = Vendor.last
+
+      expect(response).to be_successful
+      expect(created_vendor.name).to eq(vendor_params[:name])
+      expect(created_vendor.description).to eq(vendor_params[:description])
+      expect(created_vendor.contact_name).to eq(vendor_params[:contact_name])
+      expect(created_vendor.contact_phone).to eq(vendor_params[:contact_phone])
+      expect(created_vendor.credit_accepted).to eq(vendor_params[:credit_accepted])
+    end
+  end
+
+  context 'happy path and sad path for POST/create' do
+    scenario 'happy path, returns code 201' do
+      vendor_params = ({
+        name: 'Charizard Farms',
+        description: 'firey',
+        contact_name: 'Ash Ketchum',
+        contact_phone: '123-456-7890',
+        credit_accepted: true
+      })
+
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      post '/api/v0/vendors', headers: headers, params: JSON.generate(vendor: vendor_params)
+
+      expect(response).to have_http_status(:created)
+      expect(response.status).to eq(201)
+    end
+
+    scenario 'sad path, returns code 400' do
+      vendor_params = {
+                        name: 'Charizard Farms',
+                        description: 'firey',
+                        contact_name: '',
+                        contact_phone: '',
+                        credit_accepted: true
+                      }
+
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      post '/api/v0/vendors', headers: headers, params: JSON.generate(vendor: vendor_params)
+
+      expect(response).to have_http_status(:bad_request)
+      expect(response.status).to eq(400)
+    end
+  end
 end
