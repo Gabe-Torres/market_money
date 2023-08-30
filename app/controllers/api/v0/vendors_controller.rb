@@ -13,10 +13,15 @@ class Api::V0::VendorsController < ApplicationController
 
   def update
     render json: VendorSerializer.new(Vendor.update!(params[:id], vendor_params))
-  rescue ActiveRecord::RecordNotFound
-    render_vendor_not_found
   rescue ActiveRecord::RecordInvalid => e
     render json: { errors: e.message }, status: :bad_request
+  end
+
+  def destroy
+    render json: VendorSerializer.new(Vendor.destroy(params[:id]))
+    head :no_content
+  rescue ActiveRecord::RecordNotFound
+    render_vendor_not_found
   end
 
   private

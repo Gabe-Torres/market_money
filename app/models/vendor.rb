@@ -8,7 +8,7 @@ class Vendor < ApplicationRecord
 
   validates :credit_accepted, inclusion: [true, false]
 
-  has_many :market_vendors
+  has_many :market_vendors, dependent: :destroy
   has_many :markets, through: :market_vendors
 
   # def valid_credit_accepted

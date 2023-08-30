@@ -165,4 +165,40 @@ RSpec.describe 'Vendors', type: :request do
       expect(error_response['errors']).to eq("Validation failed: Name can't be blank, Description can't be blank")
     end
   end
+
+  context 'DELETE /destroy' do
+    scenario 'deletes a vendor and assoications' do
+      vendor = create(:vendor)
+      market = create(:market, id: 1)
+      create(:market_vendor, market: market, vendor: vendor)
+
+      expect(Vendor.count).to eq(1)
+      expect(MarketVendor.count).to eq(1)
+
+      expect { delete "/api/v0/vendors/#{vendor.id}" }.to change(Vendor, :count).by(-1)
+      expect(response).to be_successful
+      expect(MarketVendor.count).to eq(0)
+      expect { Vendor.find(vendor.id) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  context 'happy and sad path for DELETE /destroy' do
+    scenario 'happy path, returns code 204' do
+      vendor = create(:vendor)
+
+      delete "/api/v0/vendors/#{vendor.id}"
+
+      expect(response).to have_http_status(:no_content)
+      expect(response.status).to eq(204)
+    end
+
+    scenario 'sad path, returns code 404' do
+      get '/api/v0/vendors/123123123123'
+
+      error_response = JSON.parse(response.body)
+      expect(response).to have_http_status(:not_found)
+      expect(response.status).to eq(404)
+      expect(error_response['errors']).to eq("Couldn't find Vendor with 'id'=123123123123")
+    end
+  end
 end
