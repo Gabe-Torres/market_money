@@ -115,4 +115,54 @@ RSpec.describe 'Vendors', type: :request do
       expect(error_response['errors']).to eq("Validation failed: Contact name can't be blank, Contact phone can't be blank")
     end
   end
+
+  context 'PATCH /update' do
+    scenario 'updates a vendor and passes all attributes' do
+      id = create(:vendor).id
+      previous_name = Vendor.last.name
+      vendor_params = {
+                        'name': 'Kimberly Couwer',
+                        'contact_phone': '8389928384'
+                      }
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      patch "/api/v0/vendors/#{id}", headers: headers, params: JSON.generate(vendor: vendor_params)
+
+      vendor = Vendor.find_by(id: id)
+
+      expect(response).to be_successful
+      expect(vendor.name).to_not eq(previous_name)
+      expect(vendor.name).to eq('Kimberly Couwer')
+    end
+  end
+
+  context 'happy and sad path for PATCH /update' do
+    scenario 'happy path, returns code 200' do
+      id = create(:vendor).id
+      vendor_params = ({
+                        'name': 'Kimberly Couwer',
+                        'contact_phone': '8389928384'
+                      })
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      patch "/api/v0/vendors/#{id}", headers: headers, params: JSON.generate(vendor: vendor_params)
+      expect(response).to have_http_status(:success)
+      expect(response.status).to eq(200)
+    end
+
+    scenario 'sad path, returns code 400' do
+      id = create(:vendor).id
+      vendor_params = ({
+                        'name': '',
+                        'description': ''
+                      })
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      patch "/api/v0/vendors/#{id}", headers: headers, params: JSON.generate(vendor: vendor_params)
+      error_response = JSON.parse(response.body)
+      expect(response).to have_http_status(:bad_request)
+      expect(response.status).to eq(400)
+      expect(error_response['errors']).to eq("Validation failed: Name can't be blank, Description can't be blank")
+    end
+  end
 end
