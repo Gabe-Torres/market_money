@@ -11,7 +11,7 @@ Rails.application.routes.draw do
       resources :markets, only: [:index, :show] do
         get 'vendors', on: :member
       end
-      resources :vendors, only: [:show]
+      resources :vendors, only: [:show, :create]
     end
   end
 end
