@@ -20,7 +20,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_03_30_155211) do
     t.index ["market_id"], name: "index_market_vendors_on_market_id"
     t.index ["vendor_id"], name: "index_market_vendors_on_vendor_id"
   end
-  
+
   create_table "markets", force: :cascade do |t|
     t.string "name"
     t.string "street"
