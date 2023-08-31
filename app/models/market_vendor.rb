@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 class MarketVendor < ApplicationRecord
-  belongs_to :market
-  belongs_to :vendor
+  belongs_to :market, dependent: :destroy
+  belongs_to :vendor, dependent: :destroy
 
   # validate :validate_market_vendor_ids, on: :create
 

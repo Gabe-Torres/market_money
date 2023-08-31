@@ -140,7 +140,7 @@ RSpec.describe 'Markets', type: :request do
       error_response = JSON.parse(response.body)
       expect(response).to have_http_status(:not_found)
       expect(response.status).to eq(404)
-      expect { Market.find(123123123123) }.to raise_error { ActiveRecord::RecordNotFound }
+      expect { Market.find(123123123123) }.to(raise_error) { ActiveRecord::RecordNotFound }
     end
   end
 
@@ -198,10 +198,9 @@ RSpec.describe 'Markets', type: :request do
 
       get '/api/v0/markets/123123123123/vendors'
 
-      error_response = JSON.parse(response.body)
       expect(response).to have_http_status(:not_found)
       expect(response.status).to eq(404)
-      expect { Market.find(123123123123) }.to raise_error { ActiveRecord::RecordNotFound }
+      expect { Market.find(123123123123) }.to(raise_error) { ActiveRecord::RecordNotFound }
     end
   end
 end
