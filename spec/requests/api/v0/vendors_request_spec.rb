@@ -52,7 +52,7 @@ RSpec.describe 'Vendors', type: :request do
       error_response = JSON.parse(response.body)
       expect(response).to have_http_status(:not_found)
       expect(response.status).to eq(404)
-      expect(error_response['errors']).to eq("Couldn't find Vendor with 'id'=123123123123")
+      expect { Vendor.find(123123123123) }.to raise_error { ActiveRecord::RecordNotFound }
     end
   end
 
