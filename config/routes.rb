@@ -12,7 +12,8 @@ Rails.application.routes.draw do
         get 'vendors', on: :member
       end
       resources :vendors, only: [:show, :create, :update,  :destroy]
-      resources :market_vendors, only: [:create]
+      resources :market_vendors, only: [:create] 
+      resource :market_vendors, only: [:destroy]
     end
   end
 end

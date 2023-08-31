@@ -83,4 +83,61 @@ RSpec.describe 'MarketVendors', type: :request do
       expect(error_response['errors']).to eq("Validation failed: Market vendor asociation between market with market_id=#{market.id} and vendor_id=#{vendor.id} already exists")
     end
   end
+
+  context 'DELETE /destroy' do
+    scenario 'deletes a market_vendor and any associations' do
+      vendor = create(:vendor)
+      market = create(:market, id: 1)
+      create(:market_vendor, market: market, vendor: vendor)
+
+      expect(Vendor.count).to eq(1)
+      expect(Market.count).to eq(1)
+      expect(MarketVendor.count).to eq(1)
+
+      request_body = ({ market_id: market.id, vendor_id: vendor.id })
+
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      delete '/api/v0/market_vendors', headers: headers, params: JSON.generate(request_body)
+
+      expect(response).to have_http_status(:no_content)
+      expect(MarketVendor.count).to eq(0)
+      expect(Vendor.count).to eq(0)
+      expect(Market.count).to eq(0)
+      expect { MarketVendor.find(vendor.id) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  context 'happy and sad path for DELETE /destroy' do
+    scenario 'happy path, returns code 204' do
+      vendor = create(:vendor, id: 54861)
+      market = create(:market, id: 322474)
+      create(:market_vendor, market: market, vendor: vendor)
+
+      request_body = ({ market_id: market.id, vendor_id: vendor.id })
+
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      expect { delete '/api/v0/market_vendors', headers: headers, params: JSON.generate(request_body) }.to change(MarketVendor, :count).by(-1)
+      expect { MarketVendor.find(market.id) }.to raise_error { ActiveRecord::RecordNotFound }
+      expect { MarketVendor.find(vendor.id) }.to raise_error { ActiveRecord::RecordNotFound }
+      expect(response).to have_http_status(:no_content)
+      expect(response.status).to eq(204)
+    end
+
+    scenario 'sad path, returns code 404' do
+      market = create(:market, id: 4233)
+      vendor = create(:vendor, id: 11520)
+      request_body = ({ market_id: 4233, vendor_id: 11520 })
+
+      headers = { 'CONTENT_TYPE' => 'application/json' }
+
+      delete '/api/v0/market_vendors', headers: headers, params: JSON.generate(request_body)
+
+      error_response = JSON.parse(response.body)
+      expect(response).to have_http_status(:not_found)
+      expect(response.status).to eq(404)
+      expect(error_response['errors']).to eq("No MarketVendor with market_id=#{market.id} AND vendor_id=#{vendor.id} exist")
+    end
+  end
 end

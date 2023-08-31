@@ -18,9 +18,23 @@ class Api::V0::MarketVendorsController < ApplicationController
     end
   end
 
+  def destroy
+    market_id = market_vendor_params[:market_id]
+    vendor_id = market_vendor_params[:vendor_id]
+
+    market_vendor = MarketVendor.find_by(market_id: market_id, vendor_id: vendor_id)
+
+    if market_vendor
+      market_vendor.destroy
+      render json: MarketVendorSerializer.new(market_vendor), status: :no_content
+    else
+      render json: ErrorMarketVendor.new("No MarketVendor with market_id=#{market_id} AND vendor_id=#{vendor_id} exist"), status: :not_found
+    end
+  end
+
   private
 
   def market_vendor_params
-    params.permit(:market_id, :vendor_id)
+    params.permit(:market_id, :vendor_id, :id)
   end
 end
