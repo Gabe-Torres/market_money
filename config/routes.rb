@@ -10,9 +10,12 @@ Rails.application.routes.draw do
     namespace :v0 do
       resources :markets, only: [:index, :show] do
         get 'vendors', on: :member
+        collection do
+          get 'search'
+        end
       end
       resources :vendors, only: [:show, :create, :update,  :destroy]
-      resources :market_vendors, only: [:create] 
+      resources :market_vendors, only: [:create]
       resource :market_vendors, only: [:destroy]
     end
   end
