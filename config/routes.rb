@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     namespace :v0 do
       resources :markets, only: [:index, :show] do
         get 'vendors', on: :member
+        get 'nearest_atms', on: :member
         collection do
           get 'search'
         end

@@ -26,11 +26,14 @@ class Api::V0::MarketsController < ApplicationController
     end
   end
 
-  private
-
-  def search_params
-    params.permit(:state, :city, :name)
+  def nearest_atms
+    atms = AtmFacade.nearest_atms(Market.find(params[:id]))
+    render json: atms
+  rescue ActiveRecord::RecordNotFound => e  
+    render json: { errors: e.message }, status: :not_found
   end
+
+  private
 
   def render_market_not_found
     render json: ErrorMarket.new("Couldn't find Market with 'id'=#{params[:id]}"), status: :not_found
